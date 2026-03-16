@@ -93,5 +93,64 @@ public class GameTest {
         // Test removeObserver()
         game.removeObserver(testObserver);
         assertEquals(0, game.getObservers().size());
+        
+    }
+    
+    
+    // test different players won and cover all the if statement in payoff
+    
+    @Test
+    public void testResultTie() {
+        Game game = new IteratedPrisonersDilemma(2);
+        Participant p1 = new AlwaysCooperate();
+        Participant p2 = new AlwaysCooperate();
+        GameResult result = game.play(p1, p2);
+        assertEquals("Tie", result.getWinner());
+    }
+    @Test
+    public void testP1Wins() {
+        Game game = new IteratedPrisonersDilemma(2);
+        Participant p1 = new AlwaysDefect();
+        Participant p2 = new AlwaysCooperate();
+        GameResult result = game.play(p1, p2);
+        assertTrue(result.getTotalScoreP1() > result.getTotalScoreP2());
+        assertEquals(p1.getName(), result.getWinner());
+    }
+    @Test
+    public void testP2Wins() {
+        Game game = new IteratedPrisonersDilemma(2);
+        Participant p1 = new AlwaysCooperate();
+        Participant p2 = new AlwaysDefect();
+        GameResult result = game.play(p1, p2);
+        assertTrue(result.getTotalScoreP2() > result.getTotalScoreP1());
+        assertEquals(p2.getName(), result.getWinner());
+    }
+
+    @Test
+    public void testIfStatementInPayoff() {
+        // checking all the if statement in getPayoff()
+        Game game = new IteratedPrisonersDilemma(1);
+        Participant niceBot = new AlwaysCooperate();
+        Participant meanBot = new AlwaysDefect();
+
+        //Cooperate vs Cooperate
+        GameResult cc = game.play(niceBot, niceBot);
+        assertEquals(3, cc.getTotalScoreP1());
+        assertEquals(3, cc.getTotalScoreP2());
+
+        //Defect vs Defect
+        GameResult dd = game.play(meanBot, meanBot);
+        assertEquals(1, dd.getTotalScoreP1());
+        assertEquals(1, dd.getTotalScoreP2());
+
+        //Defect vs Cooperate
+        GameResult dc = game.play(meanBot, niceBot);
+        assertEquals(5, dc.getTotalScoreP1());
+        assertEquals(0, dc.getTotalScoreP2());
+        // Cooperate vs Defect
+        GameResult cd = game.play(niceBot, meanBot);
+        assertEquals(0, cd.getTotalScoreP1());
+        assertEquals(5, cd.getTotalScoreP2());
+        
     }
 }
